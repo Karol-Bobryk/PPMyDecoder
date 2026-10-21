@@ -9,11 +9,11 @@ class ImageLoader
 public:
     ImageLoader(QFile *file);
 
-    QImage *loadPPM3();
+    QImage loadPPM3();
 
 private:
     QFile *file;
-    QString readToken(QIODevice *device);
+    QByteArray readToken(QIODevice *device);
 };
 
 #endif // IMAGELOADER_H

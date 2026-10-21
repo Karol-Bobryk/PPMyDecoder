@@ -9,7 +9,6 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , image{nullptr}
     , ui(new Ui::MainWindow)
     , image_viewer(new ImageViewer(this))
 {
@@ -21,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete image;
     delete ui;
 }
 
@@ -40,16 +38,12 @@ void MainWindow::loadPPM3()
 
     ImageLoader loader(&file);
 
-    QImage *loadedImage = loader.loadPPM3();
+    QImage loadedImage = loader.loadPPM3();
 
-    if (!loadedImage || loadedImage->isNull()) {
+    if (loadedImage.isNull()) {
         qInfo() << "Image load failed";
-        delete loadedImage;
         return;
     }
 
-    delete image;
-    image = loadedImage;
-
-    image_viewer->setImage(*image);
+    image_viewer->setImage(loadedImage);
 }

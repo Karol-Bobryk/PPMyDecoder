@@ -21,7 +21,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QImage *image;
+    QImage image;
     ImageViewer *image_viewer;
 private slots:
     void loadPPM3();
