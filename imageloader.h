@@ -1,0 +1,19 @@
+#ifndef IMAGELOADER_H
+#define IMAGELOADER_H
+
+#include <QFile>
+#include <QPixmap>
+
+class ImageLoader
+{
+public:
+    ImageLoader(QFile *file);
+
+    QImage *loadPPM3();
+
+private:
+    QFile *file;
+    QString readToken(QIODevice *device);
+};
+
+#endif // IMAGELOADER_H
