@@ -98,8 +98,45 @@ void ImageViewer::paintEvent(QPaintEvent *event)
     if (image.isNull())
         return;
 
-    painter.scale(zoom, zoom);
+    const int scrollX = horizontalScrollBar()->value();
+    const int scrollY = verticalScrollBar()->value();
 
-    painter.translate(-horizontalScrollBar()->value() / zoom, -verticalScrollBar()->value() / zoom);
+    // draw the scaled img
+    painter.save();
+    painter.scale(zoom, zoom);
+    painter.translate(-scrollX / zoom, -scrollY / zoom);
     painter.drawImage(QPoint(0, 0), image);
+    painter.restore();
+
+    if (zoom < 30.0)
+        return;
+
+    const int xStart = qMax(0.0, scrollX / zoom);
+    const int yStart = qMax(0.0, scrollY / zoom);
+    const int xEnd = qMin(image.width(), qCeil((scrollX + viewport()->width()) / zoom));
+    const int yEnd = qMin(image.height(), qCeil((scrollY + viewport()->height()) / zoom));
+
+    painter.save();
+
+    QFont font = painter.font();
+    font.setPixelSize(qMax(8, qRound(zoom * 0.15)));
+    painter.setFont(font);
+
+    for (int y = yStart; y < yEnd; ++y) {
+        for (int x = xStart; x < xEnd; ++x) {
+            const QColor color = image.pixelColor(x, y);
+
+            const QString value = QString::number(color.red()) + ","
+                                  + QString::number(color.green()) + ","
+                                  + QString::number(color.blue());
+
+            const QRectF pixelRect(x * zoom - scrollX, y * zoom - scrollY, zoom, zoom);
+
+            painter.setPen(color.lightness() > 128 ? Qt::black : Qt::white);
+
+            painter.drawText(pixelRect, Qt::AlignCenter, value);
+        }
+    }
+
+    painter.restore();
 }
