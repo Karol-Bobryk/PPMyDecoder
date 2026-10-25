@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->buttonPPM3, &QPushButton::clicked, this, &MainWindow::loadPPM3);
     connect(ui->buttonPPM6, &QPushButton::clicked, this, &MainWindow::loadPPM6);
+    connect(ui->buttonJPEG, &QPushButton::clicked, this, &MainWindow::loadJPEG);
 }
 
 MainWindow::~MainWindow()
@@ -71,4 +72,19 @@ void MainWindow::loadPPM6()
     }
 
     image_viewer->setImage(loadedImage);
+}
+
+void MainWindow::loadJPEG()
+{
+    QString filter = "Jpeg files (*.jpg *.jpeg)";
+    QString caption = "Load a jpeg file";
+    QUrl file_url = QFileDialog::getOpenFileUrl(this, caption, QUrl(), filter);
+
+    if (file_url.isEmpty()) {
+        qInfo() << "jpeg file path is empty";
+        return;
+    }
+
+    QFile file(file_url.path(), this);
+    image_viewer->setImage(QImage(file_url.path()));
 }
