@@ -27,5 +27,6 @@ private slots:
     void loadPPM3();
     void loadPPM6();
     void loadJPEG();
+    void saveJPEG();
 };
 #endif // MAINWINDOW_H

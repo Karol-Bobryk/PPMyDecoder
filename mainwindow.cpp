@@ -5,6 +5,7 @@
 
 #include <QFile>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -18,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->buttonPPM3, &QPushButton::clicked, this, &MainWindow::loadPPM3);
     connect(ui->buttonPPM6, &QPushButton::clicked, this, &MainWindow::loadPPM6);
     connect(ui->buttonJPEG, &QPushButton::clicked, this, &MainWindow::loadJPEG);
+    connect(ui->saveJPEG, &QPushButton::clicked, this, &MainWindow::saveJPEG);
 }
 
 MainWindow::~MainWindow()
@@ -32,6 +34,7 @@ void MainWindow::loadPPM3()
     QUrl file_url = QFileDialog::getOpenFileUrl(this, caption, QUrl(), filter);
 
     if (file_url.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "p3 file path is empty");
         qInfo() << "pp3 file path is empty";
         return;
     }
@@ -47,7 +50,8 @@ void MainWindow::loadPPM3()
         return;
     }
 
-    image_viewer->setImage(loadedImage);
+    image = loadedImage;
+    image_viewer->setImage(image);
 }
 
 void MainWindow::loadPPM6()
@@ -57,6 +61,7 @@ void MainWindow::loadPPM6()
     QUrl file_url = QFileDialog::getOpenFileUrl(this, caption, QUrl(), filter);
 
     if (file_url.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "p6 file path is empty");
         qInfo() << "p6 file path is empty";
         return;
     }
@@ -71,7 +76,8 @@ void MainWindow::loadPPM6()
         return;
     }
 
-    image_viewer->setImage(loadedImage);
+    image = loadedImage;
+    image_viewer->setImage(image);
 }
 
 void MainWindow::loadJPEG()
@@ -81,10 +87,30 @@ void MainWindow::loadJPEG()
     QUrl file_url = QFileDialog::getOpenFileUrl(this, caption, QUrl(), filter);
 
     if (file_url.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "jpeg file path is empty");
         qInfo() << "jpeg file path is empty";
         return;
     }
 
     QFile file(file_url.path(), this);
-    image_viewer->setImage(QImage(file_url.path()));
+    image = QImage(file_url.path());
+    image_viewer->setImage(image);
+}
+
+void MainWindow::saveJPEG()
+{
+    if (image.isNull()) {
+        QMessageBox::about(this, "Info", "Cannot save an empty image");
+    }
+    QString filter = "Jpeg files (*.jpg *.jpeg)";
+    QString caption = "Save to a jpeg file";
+    QUrl file_url = QFileDialog::getSaveFileUrl(this, caption, QUrl(), filter);
+
+    if (file_url.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "jpeg file path is empty");
+        qInfo() << "jpeg file path is empty";
+        return;
+    }
+
+    qInfo() << image.save(file_url.path(), "JPEG", 100 - ui->compressionEdit->text().toInt());
 }
