@@ -25,5 +25,6 @@ private:
     ImageViewer *image_viewer;
 private slots:
     void loadPPM3();
+    void loadPPM6();
 };
 #endif // MAINWINDOW_H

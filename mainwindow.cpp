@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->imageLayout->addWidget(image_viewer);
 
     connect(ui->buttonPPM3, &QPushButton::clicked, this, &MainWindow::loadPPM3);
+    connect(ui->buttonPPM6, &QPushButton::clicked, this, &MainWindow::loadPPM6);
 }
 
 MainWindow::~MainWindow()
@@ -25,7 +26,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadPPM3()
 {
-    QString filter = "PP3 files (*.ppm)";
+    QString filter = "P3 files (*.ppm)";
     QString caption = "Load a ppm file";
     QUrl file_url = QFileDialog::getOpenFileUrl(this, caption, QUrl(), filter);
 
@@ -39,6 +40,30 @@ void MainWindow::loadPPM3()
     ImageLoader loader(&file);
 
     QImage loadedImage = loader.loadPPM3();
+
+    if (loadedImage.isNull()) {
+        qInfo() << "Image load failed";
+        return;
+    }
+
+    image_viewer->setImage(loadedImage);
+}
+
+void MainWindow::loadPPM6()
+{
+    QString filter = "P6 files (*.ppm)";
+    QString caption = "Load a ppm file";
+    QUrl file_url = QFileDialog::getOpenFileUrl(this, caption, QUrl(), filter);
+
+    if (file_url.isEmpty()) {
+        qInfo() << "p6 file path is empty";
+        return;
+    }
+
+    QFile file(file_url.path(), this);
+
+    ImageLoader loader(&file);
+    QImage loadedImage = loader.loadPPM6();
 
     if (loadedImage.isNull()) {
         qInfo() << "Image load failed";

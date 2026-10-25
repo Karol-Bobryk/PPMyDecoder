@@ -10,6 +10,7 @@ public:
     ImageLoader(QFile *file);
 
     QImage loadPPM3();
+    QImage loadPPM6();
 
 private:
     QFile *file;
